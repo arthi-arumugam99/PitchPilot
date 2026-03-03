@@ -777,66 +777,25 @@ export function buildColdCallingPrompt(
 ): string {
   const sections: string[] = []
 
-  // --- Identity and role ---
+  // --- 1. Identity and role ---
   sections.push(`## ROLE
 You are PitchPilot AI, a real-time cold calling coach embedded in a sales rep's workflow. You are NOT the one making the call — you are whispering coaching and suggested scripts into the rep's ear as the call happens live. Every suggestion must be something they can say OUT LOUD, RIGHT NOW, in natural conversation.`)
 
-  // --- Reasoning framework ---
-  sections.push(COLD_CALLING_REASONING)
-
-  // --- Phase-specific strategy ---
-  sections.push(getPhaseStrategy(phase))
-
-  // --- Persona coaching ---
-  const matchedPersona = context?.prospect?.matchedPersona
-  if (matchedPersona && personas.length > 0) {
-    const persona = personas.find(p => p.id === matchedPersona.personaId)
-    if (persona) {
-      sections.push(buildPersonaCoaching(persona, phase))
-    }
-  } else if (personas.length > 0) {
-    sections.push(buildPersonaDetectionHints(personas))
-  }
-
-  // --- Anti-patterns ---
-  sections.push(COLD_CALLING_ANTI_PATTERNS)
-
-  // --- QA self-check ---
-  sections.push(COLD_CALLING_QA)
-
-  // --- Variability hints ---
-  sections.push(`## RESPONSE VARIABILITY
-To keep coaching fresh and natural, consider using these patterns (only if they fit organically):
-- Cold opener hook: "${getRandomColdOpener()}"
-- Evidence transition: "${getRandomEvidenceTransition()}"
-- Closing pivot: "${getRandomClosingPivot()}"
-- Coaching tip: "${getPhaseCoachingTip(phase)}"
-Do NOT force these. Use them only when they fit the moment.`)
-
-  // --- Full-spectrum coaching ---
-  sections.push(`## FULL-SPECTRUM COACHING — EVERY MOMENT MATTERS
-You don't just coach the big moments (objections, closes). You coach EVERYTHING:
-- Small talk: If weather, sports, or casual topics come up, help the rep engage naturally then bridge to business
-- Rapport: Suggest mirroring their energy level. If they're casual, be casual. If formal, match it.
-- Transitions: Coach smooth bridges between small talk → business, opener → problem prop, discovery → close
-- Awkward silences: After a question or close attempt, coach "Wait. Don't fill the silence."
-- Distracted prospect: Coach "Offer to call back — it turns a cold call into a warm callback"
-- Rude prospect: Coach grace and a graceful exit. Never combative.
-- Gatekeepers: Coach peer-like casual approach, never "is [Name] available?"
-- Human moments: Sneezes, background noise, jokes — acknowledge them. Be a person.
-- Active listening: Suggest specific reflection phrases using THEIR words, not generic filler
-- When to laugh: If they make a joke, let the laugh breathe. Don't immediately pivot back to selling.
-- When to shut up: If they're sharing freely, the best coaching is "Keep listening. Don't interrupt."`)
-
-  // --- Company knowledge base ---
+  // --- 2. Company knowledge base (FIRST — this is what makes responses product-specific) ---
   if (companyDocs && companyDocs.trim().length > 0) {
-    sections.push(`## COMPANY KNOWLEDGE BASE
-Use the following product/company information to make your coaching specific and grounded. Reference real features, real metrics, and real customer stories when they exist.
+    sections.push(`## PRODUCT KNOWLEDGE (USE THIS IN EVERY RESPONSE)
+This is the most important section. Every suggestion you make must be grounded in this specific product, not generic advice. Reference real features, real metrics, and real customer stories when they exist.
 
 ${companyDocs}`)
+  } else {
+    sections.push(`## NO KNOWLEDGE BASE LOADED
+The rep has not uploaded any product docs. You have NO product context.
+DO NOT give generic sales advice like "speak slower" or "use their name." Instead, respond with:
+"I need product context to give you specific coaching. Add your product docs in the Knowledge Base tab — even a one-pager with what you sell, pricing, and competitors will make my coaching 10x better."
+Until docs are loaded, only coach on conversation dynamics (listening, objection handling flow, closing timing) — never suggest product-specific talking points you don't have.`)
   }
 
-  // --- Custom instructions ---
+  // --- 3. Custom instructions ---
   if (customInstructions && customInstructions.trim().length > 0) {
     sections.push(`## CUSTOM INSTRUCTIONS FROM REP
 The rep has provided these custom instructions. Respect them — they know their territory.
@@ -844,7 +803,7 @@ The rep has provided these custom instructions. Respect them — they know their
 ${customInstructions}`)
   }
 
-  // --- Conversation context ---
+  // --- 4. Conversation context (second most important — what's happening RIGHT NOW) ---
   if (context) {
     const contextParts: string[] = []
 
@@ -876,7 +835,6 @@ ${customInstructions}`)
       contextParts.push(`Points Already Covered: ${context.repCoveredPoints.join(', ')}`)
     }
 
-    // Include recent transcript for immediate context
     if (context.transcript.length > 0) {
       const recentLines = context.transcript.slice(-8)
       const transcriptText = recentLines
@@ -888,7 +846,54 @@ ${customInstructions}`)
     sections.push(`## LIVE CONVERSATION CONTEXT\n${contextParts.join('\n')}`)
   }
 
-  // --- Output instructions ---
+  // --- 5. Phase-specific strategy ---
+  sections.push(getPhaseStrategy(phase))
+
+  // --- 6. Persona coaching ---
+  const matchedPersona = context?.prospect?.matchedPersona
+  if (matchedPersona && personas.length > 0) {
+    const persona = personas.find(p => p.id === matchedPersona.personaId)
+    if (persona) {
+      sections.push(buildPersonaCoaching(persona, phase))
+    }
+  } else if (personas.length > 0) {
+    sections.push(buildPersonaDetectionHints(personas))
+  }
+
+  // --- 7. Reasoning framework ---
+  sections.push(COLD_CALLING_REASONING)
+
+  // --- 8. Anti-patterns ---
+  sections.push(COLD_CALLING_ANTI_PATTERNS)
+
+  // --- 9. QA self-check ---
+  sections.push(COLD_CALLING_QA)
+
+  // --- 10. Variability hints ---
+  sections.push(`## RESPONSE VARIABILITY
+To keep coaching fresh and natural, consider using these patterns (only if they fit organically):
+- Cold opener hook: "${getRandomColdOpener()}"
+- Evidence transition: "${getRandomEvidenceTransition()}"
+- Closing pivot: "${getRandomClosingPivot()}"
+- Coaching tip: "${getPhaseCoachingTip(phase)}"
+Do NOT force these. Use them only when they fit the moment.`)
+
+  // --- 11. Full-spectrum coaching ---
+  sections.push(`## FULL-SPECTRUM COACHING — EVERY MOMENT MATTERS
+You don't just coach the big moments (objections, closes). You coach EVERYTHING:
+- Small talk: If weather, sports, or casual topics come up, help the rep engage naturally then bridge to business
+- Rapport: Suggest mirroring their energy level. If they're casual, be casual. If formal, match it.
+- Transitions: Coach smooth bridges between small talk → business, opener → problem prop, discovery → close
+- Awkward silences: After a question or close attempt, coach "Wait. Don't fill the silence."
+- Distracted prospect: Coach "Offer to call back — it turns a cold call into a warm callback"
+- Rude prospect: Coach grace and a graceful exit. Never combative.
+- Gatekeepers: Coach peer-like casual approach, never "is [Name] available?"
+- Human moments: Sneezes, background noise, jokes — acknowledge them. Be a person.
+- Active listening: Suggest specific reflection phrases using THEIR words, not generic filler
+- When to laugh: If they make a joke, let the laugh breathe. Don't immediately pivot back to selling.
+- When to shut up: If they're sharing freely, the best coaching is "Keep listening. Don't interrupt."`)
+
+  // --- 12. Output instructions ---
   sections.push(`## OUTPUT RULES
 1. Suggest what the rep should say NEXT — in their voice, not yours
 2. Keep suggestions to 1-3 sentences. Cold calls demand brevity.

@@ -1,0 +1,260 @@
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&family=Inter:wght@400;500;600&display=swap');
+@import "tailwindcss";
+
+/* ===== Neo-Brutalist Design System ===== */
+
+:root {
+  /* Backgrounds */
+  --bg-primary: #FFFEF0;
+  --bg-surface: #FFFFFF;
+  --bg-sidebar: #1a1a2e;
+  --bg-overlay: #0d0d0d;
+
+  /* Accent Colors */
+  --color-accent: #FFE500;
+  --color-ai: #00D4AA;
+  --color-danger: #FF375F;
+  --color-success: #22c55e;
+  --color-blue: #4D5BFF;
+
+  /* Text */
+  --color-text: #000000;
+  --color-muted: #666666;
+
+  /* Structure */
+  --color-border: #000000;
+  --border: 2px solid #000000;
+  --border-heavy: 3px solid #000000;
+  --radius: 0px;
+
+  /* Shadows — hard offset, zero blur */
+  --shadow-sm: 2px 2px 0px 0px #000;
+  --shadow-md: 4px 4px 0px 0px #000;
+  --shadow-lg: 6px 6px 0px 0px #000;
+
+  /* Typography */
+  --font-display: 'Space Grotesk', system-ui, sans-serif;
+  --font-body: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-mono: 'JetBrains Mono', 'Courier New', monospace;
+}
+
+/* Base */
+body {
+  background: var(--bg-primary);
+  color: var(--color-text);
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Overlay mode (transparent bg for floating window) — stays dark */
+.overlay-mode {
+  background: transparent !important;
+}
+
+/* ===== Neo-Brutalist Utility Classes ===== */
+
+.neo-border { border: 2px solid #000; }
+.neo-shadow-sm { box-shadow: 2px 2px 0px 0px #000; }
+.neo-shadow { box-shadow: 4px 4px 0px 0px #000; }
+.neo-shadow-lg { box-shadow: 6px 6px 0px 0px #000; }
+
+.neo-card {
+  background: var(--bg-surface);
+  border: 2px solid #000;
+  box-shadow: 4px 4px 0px 0px #000;
+  transition: transform 0.1s ease, box-shadow 0.1s ease;
+}
+.neo-card:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: 6px 6px 0px 0px #000;
+}
+.neo-card:active {
+  transform: translate(4px, 4px);
+  box-shadow: none;
+}
+
+.neo-btn {
+  border: 2px solid #000;
+  box-shadow: 4px 4px 0px 0px #000;
+  font-family: var(--font-display);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  transition: transform 0.1s ease, box-shadow 0.1s ease;
+  cursor: pointer;
+}
+.neo-btn:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: 6px 6px 0px 0px #000;
+}
+.neo-btn:active {
+  transform: translate(4px, 4px);
+  box-shadow: none;
+}
+.neo-btn:disabled {
+  opacity: 0.4;
+  box-shadow: none;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.neo-btn-sm {
+  border: 2px solid #000;
+  box-shadow: 2px 2px 0px 0px #000;
+  font-family: var(--font-display);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  transition: transform 0.1s ease, box-shadow 0.1s ease;
+  cursor: pointer;
+}
+.neo-btn-sm:hover {
+  transform: translate(-1px, -1px);
+  box-shadow: 3px 3px 0px 0px #000;
+}
+.neo-btn-sm:active {
+  transform: translate(2px, 2px);
+  box-shadow: none;
+}
+
+.neo-input {
+  border: 2px solid #000;
+  background: var(--bg-surface);
+  font-family: var(--font-body);
+  outline: none;
+  transition: box-shadow 0.1s ease;
+}
+.neo-input:focus {
+  box-shadow: 0 0 0 2px #000;
+}
+.neo-input::placeholder {
+  color: #999;
+}
+
+/* ===== Trigger type borders — colored left border ===== */
+.trigger-objection { border-left: 4px solid var(--color-danger); }
+.trigger-risk { border-left: 4px solid var(--color-danger); }
+.trigger-competitor { border-left: 4px solid var(--color-blue); }
+.trigger-buying_signal { border-left: 4px solid var(--color-success); }
+.trigger-closing { border-left: 4px solid var(--color-success); }
+.trigger-pricing { border-left: 4px solid var(--color-accent); }
+.trigger-technical { border-left: 4px solid #8b5cf6; }
+.trigger-decision_maker { border-left: 4px solid #ec4899; }
+
+/* ===== Phase badges ===== */
+.phase-badge {
+  padding: 4px 12px;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-family: var(--font-display);
+  border: 2px solid #000;
+}
+
+/* ===== Card Animations ===== */
+.card-enter {
+  animation: slideUp 200ms ease-out;
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.fade-in {
+  animation: fadeIn 150ms ease-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* ===== Cursor Blink ===== */
+.cursor-blink {
+  animation: blink 0.7s infinite;
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+/* ===== Scrollbar — brutalist thin ===== */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #000;
+  border-radius: 0px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #333;
+}
+
+/* ===== Drag Region (Electron window drag) ===== */
+.app-drag-region {
+  -webkit-app-region: drag;
+}
+
+.drag-region {
+  -webkit-app-region: drag;
+}
+
+.no-drag {
+  -webkit-app-region: no-drag;
+}
+
+/* ===== Recording Dot ===== */
+.recording-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--color-danger);
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+
+/* ===== Company Switcher ===== */
+.company-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+/* ===== Typography helpers ===== */
+.font-display {
+  font-family: var(--font-display);
+}
+
+.font-mono {
+  font-family: var(--font-mono);
+}
+
+/* ===== Trigger auto-fade ===== */
+.trigger-fade {
+  opacity: 0.4;
+  box-shadow: none;
+  transition: opacity 0.5s ease;
+}
+
+/* ===== AI Response accent ===== */
+.ai-accent {
+  border-left: 4px solid var(--color-ai);
+}
+
+.screen-accent {
+  border-left: 4px solid var(--color-blue);
+}

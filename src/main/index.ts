@@ -322,14 +322,23 @@ function registerIPC(): void {
     }, 3000)
 
     // Show overlay
-    if (!overlayWindow || overlayWindow.isDestroyed()) {
+    const overlayNewlyCreated = !overlayWindow || overlayWindow.isDestroyed()
+    if (overlayNewlyCreated) {
       createOverlayWindow()
     }
     overlayWindow?.show()
 
-    broadcast('call-status', 'active')
-    // Broadcast initial phase so Dashboard shows INTRO pill immediately
-    broadcast('phase-change', { phase: 'intro', timestamp: Date.now() })
+    // Delay broadcasts for newly created overlay — renderer hasn't loaded yet
+    const broadcastCallStart = () => {
+      broadcast('call-status', 'active')
+      broadcast('phase-change', { phase: 'intro', timestamp: Date.now() })
+    }
+
+    if (overlayNewlyCreated && overlayWindow) {
+      overlayWindow.webContents.once('did-finish-load', broadcastCallStart)
+    } else {
+      broadcastCallStart()
+    }
 
     return { sessionId: currentSession.id }
   })

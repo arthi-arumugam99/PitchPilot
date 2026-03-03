@@ -158,8 +158,8 @@ function createMainWindow(): void {
 }
 
 function createOverlayWindow(): void {
-  const display = electronScreen.getPrimaryDisplay()
-  const workArea = display.workArea
+  const { workArea } = electronScreen.getPrimaryDisplay()
+
   overlayWindow = new BrowserWindow({
     width: workArea.width,
     height: workArea.height,
@@ -167,11 +167,13 @@ function createOverlayWindow(): void {
     y: workArea.y,
     frame: false,
     transparent: true,
+    backgroundColor: '#00000000',
+    hasShadow: false,
+    show: false,
     alwaysOnTop: true,
     skipTaskbar: true,
-    resizable: true,
-    focusable: true,
-    type: 'toolbar',
+    resizable: false,
+    focusable: false,
     webPreferences: {
       preload: join(__dirname, '../preload/index.js'),
       contextIsolation: true,
@@ -179,8 +181,10 @@ function createOverlayWindow(): void {
     },
   })
 
+  // Set all properties BEFORE show
   overlayWindow.setContentProtection(true)
   overlayWindow.setAlwaysOnTop(true, 'screen-saver')
+  overlayWindow.setVisibleOnAllWorkspaces(true, { visibleOnFullScreen: true })
 
   if (process.env.ELECTRON_RENDERER_URL) {
     overlayWindow.loadURL(process.env.ELECTRON_RENDERER_URL + '#/overlay')
@@ -188,7 +192,11 @@ function createOverlayWindow(): void {
     overlayWindow.loadFile(join(__dirname, '../renderer/index.html'), { hash: '/overlay' })
   }
 
-  overlayWindow.setVisibleOnAllWorkspaces(true, { visibleOnFullScreen: true })
+  overlayWindow.once('ready-to-show', () => {
+    if (!overlayWindow || overlayWindow.isDestroyed()) return
+    overlayWindow.setIgnoreMouseEvents(true, { forward: true })
+    overlayWindow.show()
+  })
 }
 
 /** Send to both main and overlay windows. */
@@ -679,6 +687,16 @@ function registerIPC(): void {
   ipcMain.handle('minimize-main', () => {
     mainWindow?.minimize()
     return true
+  })
+
+  // Overlay interactivity — toggle mouse event pass-through on transparent areas
+  ipcMain.handle('set-overlay-interactive', (_, interactive: boolean) => {
+    if (!overlayWindow || overlayWindow.isDestroyed()) return
+    if (interactive) {
+      overlayWindow.setIgnoreMouseEvents(false)
+    } else {
+      overlayWindow.setIgnoreMouseEvents(true, { forward: true })
+    }
   })
 
   // Mic mute toggle — broadcasts to all windows so overlay and dashboard stay in sync

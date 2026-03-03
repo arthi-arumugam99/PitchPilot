@@ -54,6 +54,7 @@ interface Window {
     // Overlay + Window
     toggleOverlay: () => Promise<boolean>
     minimizeMain: () => Promise<boolean>
+    setOverlayInteractive: (interactive: boolean) => Promise<void>
 
     // Mic mute
     toggleMicMute: () => Promise<boolean>

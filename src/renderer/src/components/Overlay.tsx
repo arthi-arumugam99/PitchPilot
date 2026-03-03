@@ -210,13 +210,18 @@ export default function Overlay() {
 
   const current = items[currentIdx] || null
 
+  const enableInteractive = () => window.api.setOverlayInteractive(true)
+  const disableInteractive = () => window.api.setOverlayInteractive(false)
+
   // ========== WAITING STATE ==========
   if (!callActive) {
     return (
-      <div className="overlay-mode h-screen flex items-center justify-center" style={{ WebkitAppRegion: 'drag' } as any}>
+      <div className="overlay-mode h-screen flex items-center justify-center">
         <div
           className="rounded-2xl px-8 py-5 text-center"
-          style={{ background: 'rgba(15,15,25,0.85)', backdropFilter: 'blur(12px)', WebkitAppRegion: 'no-drag' } as any}
+          onMouseEnter={enableInteractive}
+          onMouseLeave={disableInteractive}
+          style={{ background: 'rgba(15,15,25,0.85)', backdropFilter: 'blur(12px)' }}
         >
           <div className="w-10 h-10 bg-[#2563eb] rounded-xl flex items-center justify-center text-white font-bold text-sm mx-auto mb-3">P</div>
           <div className="text-sm font-medium text-white/80">PitchPilot</div>
@@ -234,12 +239,14 @@ export default function Overlay() {
 
   // ========== ACTIVE CALL — PARAKEET-STYLE OVERLAY ==========
   return (
-    <div className="overlay-mode h-screen flex flex-col" style={{ WebkitAppRegion: 'drag' } as any}>
+    <div className="overlay-mode h-screen flex flex-col">
 
       {/* ===== TOP TOOLBAR (like Parakeet's green bar) ===== */}
       <div
         className="flex items-center gap-2 px-4 py-2 mx-4 mt-3 rounded-xl"
-        style={{ background: 'rgba(15,15,25,0.9)', backdropFilter: 'blur(16px)', WebkitAppRegion: 'no-drag' } as any}
+        onMouseEnter={enableInteractive}
+        onMouseLeave={disableInteractive}
+        style={{ background: 'rgba(15,15,25,0.9)', backdropFilter: 'blur(16px)' }}
       >
         {/* Brand */}
         <div className="w-7 h-7 bg-[#2563eb] rounded-lg flex items-center justify-center text-white font-bold text-[10px] shrink-0">P</div>
@@ -331,7 +338,9 @@ export default function Overlay() {
       {/* ===== HINT BAR (like Parakeet's info bar) ===== */}
       <div
         className="mx-4 mt-1 px-4 py-1.5 rounded-lg flex items-center"
-        style={{ background: 'rgba(15,15,25,0.7)', backdropFilter: 'blur(8px)', WebkitAppRegion: 'no-drag' } as any}
+        onMouseEnter={enableInteractive}
+        onMouseLeave={disableInteractive}
+        style={{ background: 'rgba(15,15,25,0.7)', backdropFilter: 'blur(8px)' }}
       >
         <span className="text-[11px] text-white/40 flex-1 truncate">
           Click AI Help and PitchPilot will analyze the conversation and tell you exactly what to say
@@ -366,7 +375,9 @@ export default function Overlay() {
       {current && (
         <div
           className="mx-4 mb-4 rounded-2xl overflow-hidden"
-          style={{ background: 'rgba(15,15,25,0.88)', backdropFilter: 'blur(20px)', WebkitAppRegion: 'no-drag' } as any}
+          onMouseEnter={enableInteractive}
+          onMouseLeave={disableInteractive}
+          style={{ background: 'rgba(15,15,25,0.88)', backdropFilter: 'blur(20px)' }}
         >
           {/* Navigation bar */}
           <div className="flex items-center px-4 py-2 border-b border-white/5">
@@ -441,7 +452,9 @@ export default function Overlay() {
       {!current && (
         <div
           className="mx-4 mb-4 rounded-2xl px-8 py-10 text-center"
-          style={{ background: 'rgba(15,15,25,0.85)', backdropFilter: 'blur(16px)', WebkitAppRegion: 'no-drag' } as any}
+          onMouseEnter={enableInteractive}
+          onMouseLeave={disableInteractive}
+          style={{ background: 'rgba(15,15,25,0.85)', backdropFilter: 'blur(16px)' }}
         >
           <div className="text-white/25 text-[15px] mb-1">No responses yet</div>
           <div className="text-white/15 text-[12px]">Click AI Help or ask a question to get started</div>

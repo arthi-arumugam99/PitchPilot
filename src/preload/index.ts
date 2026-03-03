@@ -63,6 +63,7 @@ const api = {
   // Overlay + Window
   toggleOverlay: () => ipcRenderer.invoke('toggle-overlay'),
   minimizeMain: () => ipcRenderer.invoke('minimize-main'),
+  setOverlayInteractive: (interactive: boolean) => ipcRenderer.invoke('set-overlay-interactive', interactive),
 
   // Mic mute (syncs between main window and overlay)
   toggleMicMute: () => ipcRenderer.invoke('toggle-mic-mute'),
